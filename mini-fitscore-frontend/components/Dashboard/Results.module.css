@@ -1,0 +1,108 @@
+.resultsContainer {
+  width: 100%;
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #5f6368;
+  font-size: 16px;
+}
+
+.loadingState::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f1f3f4;
+  border-top: 3px solid #1a73e8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #5f6368;
+  font-size: 16px;
+}
+
+.emptyState::before {
+  content: "📋";
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.tableContainer {
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid #e8eaed;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.candidatesTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+  background: white;
+}
+
+.candidatesTable th {
+  background: #f8f9fa;
+  padding: 16px;
+  text-align: left;
+  font-weight: 500;
+  color: #202124;
+  border-bottom: 1px solid #dadce0;
+  position: sticky;
+  top: 0;
+  font-size: 14px;
+}
+
+.candidatesTable td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f3f4;
+  font-size: 14px;
+}
+
+.candidatesTable tr:last-child td {
+  border-bottom: none;
+}
+
+.cardsContainer {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+@media (max-width: 800px) {
+  .tableContainer {
+    display: none;
+  }
+  
+  .cardsContainer {
+    display: flex;
+  }
+  
+  .candidatesTable {
+    min-width: unset;
+  }
+  
+  .candidatesTable th,
+  .candidatesTable td {
+    padding: 12px;
+  }
+}
