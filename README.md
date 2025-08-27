@@ -1,44 +1,52 @@
-
-# Documentação Completa - Sistema FitScore
+# 📘 Documentação Completa - **Sistema FitScore**
 
 ## 📋 Visão Geral
-Sistema completo para avaliação e gerenciamento de candidatos com cálculo automático de Fit Score. Composto por back-end Spring Boot e front-end Next.js.
-## Link do video
-https://youtu.be/LJKjO2CtYBg
-## 🚀 Como Executar o Sistema Completo
+O **FitScore** é um sistema completo para avaliação e gerenciamento de candidatos, com **cálculo automático de Fit Score**.  
+Ele é composto por:  
+- 🖥️ **Back-end**: Spring Boot  
+- 🌐 **Front-end**: Next.js  
 
-### Pré-requisitos
-- Java JDK 17+
-- Maven 3.6+
-- Node.js 16+
-- npm ou yarn
-- Banco de dados PostgreSQL
+🎥 **Demonstração em Vídeo**: [Assista aqui](https://youtu.be/LJKjO2CtYBg)
 
-### Passo a Passo
+---
 
-#### Configurar o Banco de Dados
-```bash
-# Criar database no PostgreSQL
-createdb fitscore
+## 🚀 Como Executar o Sistema
+
+### ✅ Pré-requisitos
+- ☕ **Java JDK 17+**  
+- 📦 **Maven 3.6+**  
+- 🟩 **Node.js 16+**  
+- 📌 **npm** ou **yarn**  
+- 🐘 **PostgreSQL**  
+- 🔗 **Ngrok instalado** na máquina  
+
+---
+
+### ⚙️ Passo a Passo
+
+#### 1️⃣ Configurar o Banco de Dados
+Edite o arquivo de configuração do back-end para inserir suas credenciais do Supabase:  
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/fitscore
+spring.datasource.username=SEU_USUARIO
+spring.datasource.password=SUA_SENHA
 ```
 
-#### Back-end (Spring Boot)
+---
+
+#### 2️⃣ Back-end (Spring Boot)
 ```bash
 # Navegar até a pasta do back-end
 cd fitscore-backend
-
-# Configurar application.properties
-# Editar com suas credenciais do banco:
-# spring.datasource.url=jdbc:postgresql://localhost:5432/fitscore
-# spring.datasource.username=seu-usuario
-# spring.datasource.password=sua-senha
 
 # Compilar e executar
 mvn clean install
 mvn spring-boot:run
 ```
 
-#### Front-end (Next.js)
+---
+
+#### 3️⃣ Front-end (Next.js)
 ```bash
 # Navegar até a pasta do front-end
 cd fitscore-frontend
@@ -46,79 +54,127 @@ cd fitscore-frontend
 # Instalar dependências
 npm install
 
-# Executar em desenvolvimento
+# Rodar em desenvolvimento
 npm run dev
 ```
 
-### Acessar a Aplicação
-- Front-end: `http://localhost:3000`
-- API Back-end: `http://localhost:8080`
+---
 
+#### 🌍 Acessar a Aplicação
+- **Front-end:** `http://localhost:3000`  
+- **API Back-end:** `http://localhost:8080`  
 
-### Alterar Porta da API
-Se necessário alterar a porta do back-end, edite o front-end em `dashboard.tsx`:
-```typescript
-const baseUrl = 'http://localhost:8080' // Altere para a nova porta
+---
+
+## 🔗 Rodando o Ngrok
+
+O **Ngrok** é usado para expor localmente o **backend** e o **frontend** na internet, permitindo:  
+- Integrações externas (ex.: webhooks n8n)  
+- Testes em dispositivos móveis  
+- Acesso remoto  
+
+### 📌 Pré-requisitos
+- Ter o **Ngrok** baixado (`ngrok.exe` no Windows).  
+- Ter o arquivo **`ngrok.yml`** configurado na pasta do projeto.  
+
+### ▶️ Comando para iniciar
+```powershell
+C:\Users\mniac\Downloads\ngrok.exe start --config "C:\Users\mniac\Desktop\FitScore\ngrok.yml" --all
 ```
+
+### 📄 Exemplo de `ngrok.yml`
+```yaml
+version: "2"
+authtoken: SEU_AUTH_TOKEN
+tunnels:
+  backend:
+    addr: 8080
+    proto: http
+  frontend:
+    addr: 3000
+    proto: http
+```
+
+➡️ Resultado:  
+O terminal exibirá duas URLs públicas (uma para o **backend** e outra para o **frontend**).  
+
+---
+
+## ⚙️ Alterar Porta da API
+Se precisar alterar a porta do backend, ajuste no front-end em `dashboard.tsx`:  
+```typescript
+const baseUrl = 'http://localhost:8080' // Altere aqui
+```
+
+---
 
 ## 📊 Estrutura do Sistema
 
-### Back-end (Spring Boot)
-- **Model:** Candidato (entidade JPA)
-- **DTO:** CandidatoDTO (saída) e CandidatoCreateDTO (entrada)
-- **Repository:** Operações de banco de dados
-- **Service:** Lógica de negócio e cálculos
-- **Controller:** Endpoints REST
+### 🖥️ Back-end (Spring Boot)
+- **Model:** `Candidato` (entidade JPA)  
+- **DTOs:** `CandidatoDTO` (saída) e `CandidatoCreateDTO` (entrada)  
+- **Repository:** Operações no banco de dados  
+- **Service:** Regras de negócio e cálculos  
+- **Controller:** Endpoints REST  
 
-### Front-end (Next.js)
-- **Dashboard:** Visualização de candidatos com filtros
-- **Formulário:** Avaliação de candidatos com sistema de blocos
-- **Componentes:** Interface responsiva e intuitiva
-- **Integração:** Consumo da API RESTful
+### 🌐 Front-end (Next.js)
+- **Dashboard:** Lista e filtra candidatos  
+- **Formulário:** Avaliação interativa com progresso  
+- **Componentes:** Interface responsiva e intuitiva  
+- **Integração:** Consumo da API REST  
 
-## 🎯 Funcionalidades Principais
+---
+
+## 🎯 Funcionalidades
 
 ### Back-end
-- ✅ Cadastro de candidatos com nome, e-mail e respostas
-- ✅ Cálculo automático de Fit Score (0-100)
-- ✅ Classificação automática em categorias:
-  - Fit Altíssimo (≥80)
-  - Fit Aprovado (≥60)
-  - Fit Questionável (≥40)
-  - Fora do Perfil (<40)
-- ✅ Filtros por classificação
-- ✅ Integração com n8n via webhook
+- ✅ Cadastro de candidatos  
+- ✅ Cálculo automático de **Fit Score (0-100)**  
+- ✅ Classificação automática em categorias:  
+  - **Fit Altíssimo** (≥80)  
+  - **Fit Aprovado** (≥60)  
+  - **Fit Questionável** (≥40)  
+  - **Fora do Perfil** (<40)  
+- ✅ Filtros de busca  
+- ✅ Integração com **n8n via Webhook**  
 
 ### Front-end
-- ✅ Dashboard com listagem de candidatos
-- ✅ Filtros por classificação
-- ✅ Formulário de avaliação com progresso
-- ✅ Cálculo em tempo real do Fit Score
-- ✅ Design responsivo para mobile e desktop
-- ✅ Sistema de notificações para candidatos
+- ✅ Dashboard com listagem e filtros  
+- ✅ Formulário com cálculo em tempo real  
+- ✅ Notificações automáticas  
+- ✅ Design **responsivo** (desktop & mobile)  
+
+---
 
 ## 🔌 Endpoints da API
 
-- **GET /api/candidatos**: Lista todos os candidatos (com filtro opcional)
+### 📥 Criar Candidato
 ```bash
-curl "http://localhost:8080/api/candidatos?classificacao=ALTO"
+POST /api/candidatos
 ```
-
-- **POST /api/candidatos**: Cria um novo candidato
 ```bash
-curl -X POST http://localhost:8080/api/candidatos   -H "Content-Type: application/json"   -d '{
+curl -X POST http://localhost:8080/api/candidatos \
+  -H "Content-Type: application/json" \
+  -d '{
     "nome": "João Silva",
     "email": "joao@email.com",
     "respostas": [8,7,9,6,8,7,9,8,7,9]
   }'
 ```
 
-- **GET /api/candidatos/{id}**: Busca candidato por ID
+### 📤 Listar Candidatos
 ```bash
-curl http://localhost:8080/api/candidatos/1
+GET /api/candidatos?classificacao=ALTO
 ```
 
-## 🛠 Comandos Úteis
+### 📄 Buscar por ID
+```bash
+GET /api/candidatos/{id}
+```
+
+---
+
+## 🛠️ Comandos Úteis
 
 ### Back-end
 ```bash
@@ -133,11 +189,17 @@ npm run build
 
 # Executar em produção
 npm start
-
 ```
 
-## ⚠️ Solução de Problemas
-- **Erro de Conexão com Banco:** Verifique se o PostgreSQL está rodando e as credenciais no `application.properties` estão corretas.  
-- **Erro de CORS:** O back-end está configurado para aceitar requests do front-end na porta 3000.  
-- **Formulário Não Envia:** Verifique se todas as 10 perguntas foram respondidas (escala 0-10).  
+---
 
+## ⚠️ Solução de Problemas
+
+- 🔌 **Erro de Conexão com Banco:**  
+  Verifique se o PostgreSQL está rodando e se as credenciais no `application.properties` estão corretas.  
+
+- 🌍 **Erro de CORS:**  
+  O backend aceita requests apenas do `localhost:3000`. Ajuste se usar outra porta.  
+
+- 📝 **Formulário não envia:**  
+  Certifique-se de que todas as 10 perguntas foram respondidas (0 a 10).  
