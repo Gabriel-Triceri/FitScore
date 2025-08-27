@@ -3,7 +3,8 @@
 
 ## 📋 Visão Geral
 Sistema completo para avaliação e gerenciamento de candidatos com cálculo automático de Fit Score. Composto por back-end Spring Boot e front-end Next.js.
-
+## Link do video
+https://youtu.be/LJKjO2CtYBg
 ## 🚀 Como Executar o Sistema Completo
 
 ### Pré-requisitos
