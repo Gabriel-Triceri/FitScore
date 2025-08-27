@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +18,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,43 +35,68 @@ public class CandidatoService {
     }
 
     public CandidatoDTO create(CandidatoCreateDTO dto) throws Exception {
-        List<Integer> respostas = dto.getRespostas() != null ? dto.getRespostas() : new ArrayList<>();
-        if (respostas.size() != 10) throw new IllegalArgumentException("São necessárias 10 respostas");
+        return createAsync(dto).get();
+    }
 
-        int soma = respostas.stream().mapToInt(Integer::intValue).sum();
-        int fitScore = Math.toIntExact(Math.round((soma / (10.0f * 10.0f)) * 100.0f));
 
-        String classificacao = classify(fitScore);
+    @Async("taskExecutor")
+    public CompletableFuture<CandidatoDTO> createAsync(CandidatoCreateDTO dto) {
+        try {
+            List<Integer> respostas = dto.getRespostas() != null ? dto.getRespostas() : new ArrayList<>();
+            if (respostas.size() != 10) {
+                throw new IllegalArgumentException("São necessárias 10 respostas");
+            }
 
-        Candidato c = new Candidato();
-        c.setNome(dto.getNome());
-        c.setEmail(dto.getEmail());
-        c.setRespostasJson(objectMapper.writeValueAsString(respostas));
-        c.setFitScore(fitScore);
-        c.setClassificacao(classificacao);
-        c.setCriadoEm(OffsetDateTime.now());
+            int soma = respostas.stream().mapToInt(Integer::intValue).sum();
+            int fitScore = Math.toIntExact(Math.round((soma / (10.0f * 10.0f)) * 100.0f));
 
-        Candidato saved = repository.save(c);
+            String classificacao = classify(fitScore);
 
+            Candidato c = new Candidato();
+            c.setNome(dto.getNome());
+            c.setEmail(dto.getEmail());
+            c.setRespostasJson(objectMapper.writeValueAsString(respostas));
+            c.setFitScore(fitScore);
+            c.setClassificacao(classificacao);
+            c.setCriadoEm(OffsetDateTime.now());
+
+            Candidato saved = repository.save(c);
+
+
+            notifyN8nWebhookAsync(saved);
+
+            return CompletableFuture.completedFuture(toDto(saved));
+        } catch (Exception ex) {
+            return CompletableFuture.failedFuture(ex);
+        }
+    }
+
+
+    @Async("taskExecutor")
+    public void notifyN8nWebhookAsync(Candidato candidato) {
         if (n8nWebhookUrl != null && !n8nWebhookUrl.isBlank()) {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                Map<String,Object> payload = Map.of(
-                        "id", saved.getId(),
-                        "nome", saved.getNome(),
-                        "email", saved.getEmail(),
-                        "fitScore", saved.getFitScore(),
-                        "classificacao", saved.getClassificacao()
+                Map<String, Object> payload = Map.of(
+                        "id", candidato.getId(),
+                        "nome", candidato.getNome(),
+                        "email", candidato.getEmail(),
+                        "fitScore", candidato.getFitScore(),
+                        "classificacao", candidato.getClassificacao()
                 );
-                HttpEntity<Map<String,Object>> entity = new HttpEntity<>(payload, headers);
+                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
                 restTemplate.postForEntity(n8nWebhookUrl, entity, String.class);
             } catch (Exception ex) {
                 System.out.println("Erro ao notificar n8n: " + ex.getMessage());
             }
         }
+    }
 
-        return toDto(saved);
+
+    @Async("taskExecutor")
+    public CompletableFuture<List<CandidatoDTO>> listAllAsync(String classificacaoFilter) {
+        return CompletableFuture.completedFuture(listAll(classificacaoFilter));
     }
 
     public List<CandidatoDTO> listAll(String classificacaoFilter) {
@@ -77,7 +104,7 @@ public class CandidatoService {
         List<Candidato> filtered = all;
 
         if (classificacaoFilter != null && !classificacaoFilter.isBlank()) {
-            // Normaliza apelidos para os nomes que estão no banco
+
             String filtroNormalizado = switch (classificacaoFilter.toUpperCase()) {
                 case "BAIXO" -> "Fora do Perfil";
                 case "MEDIO", "MÉDIO" -> "Fit Questionável";
@@ -95,9 +122,19 @@ public class CandidatoService {
         return filtered.stream().map(this::toDto).collect(Collectors.toList());
     }
 
+    @Async("taskExecutor")
+    public CompletableFuture<List<CandidatoDTO>> listApprovedOrHigherAsync() {
+        return CompletableFuture.completedFuture(listApprovedOrHigher());
+    }
+
     public List<CandidatoDTO> listApprovedOrHigher() {
         List<Candidato> list = repository.findByFitScoreGreaterThanEqual(80);
         return list.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Async("taskExecutor")
+    public CompletableFuture<CandidatoDTO> getByIdAsync(Long id) {
+        return CompletableFuture.completedFuture(getById(id));
     }
 
     public CandidatoDTO getById(Long id) {

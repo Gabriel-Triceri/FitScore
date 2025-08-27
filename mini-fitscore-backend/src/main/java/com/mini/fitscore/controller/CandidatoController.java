@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/candidatos")
@@ -30,14 +31,19 @@ public class CandidatoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CandidatoDTO>> list(@RequestParam(required = false) String classificacao) {
-        return ResponseEntity.ok(service.listAll(classificacao));
+    public CompletableFuture<ResponseEntity<List<CandidatoDTO>>> list(@RequestParam(required = false) String classificacao) {
+        return service.listAllAsync(classificacao)
+                .thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        CandidatoDTO dto = service.getById(id);
-        if (dto == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(dto);
+    public CompletableFuture<ResponseEntity<CandidatoDTO>> getById(@PathVariable Long id) {
+        return service.getByIdAsync(id)
+                .thenApply(dto -> {
+                    if (dto == null) {
+                        return ResponseEntity.notFound().build();
+                    }
+                    return ResponseEntity.ok(dto);
+                });
     }
 }
