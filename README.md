@@ -61,8 +61,8 @@ npm run dev
 ---
 
 #### 🌍 Acessar a Aplicação
-- **Front-end:** `http://localhost:3000`  
-- **API Back-end:** `http://localhost:8080`  
+- **Front-end:** `link ngrok`  
+- **API Back-end:** `link ngrok`  
 
 ---
 
