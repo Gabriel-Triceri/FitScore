@@ -53,13 +53,6 @@ npm run dev
 - Front-end: `http://localhost:3000`
 - API Back-end: `http://localhost:8080`
 
-## 🔧 Configurações Opcionais
-
-### Integração com n8n
-Adicione no `application.properties` do back-end:
-```properties
-n8n.webhook.url=https://seu-webhook-n8n.com/webhook
-```
 
 ### Alterar Porta da API
 Se necessário alterar a porta do back-end, edite o front-end em `dashboard.tsx`:
