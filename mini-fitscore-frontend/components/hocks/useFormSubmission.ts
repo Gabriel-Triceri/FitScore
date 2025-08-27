@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { perguntasPorBloco } from '../../pages/formulario';
 
-const baseUrl = 'http://localhost:8080';
+const baseUrl = 'https://96c41b2ecab3.ngrok-free.app';
 
 export const useFormSubmission = () => {
   const [nome, setNome] = useState('');
@@ -82,8 +82,6 @@ export const useFormSubmission = () => {
               candidatoId: j.id,
               candidatoEmail: email,
               candidatoNome: nome,
-              fitScore: calculateFitScore(respostas),
-              classificacao: classify(calculateFitScore(respostas)),
               mensagemPersonalizada: mensagemPersonalizada || undefined
             })
           });

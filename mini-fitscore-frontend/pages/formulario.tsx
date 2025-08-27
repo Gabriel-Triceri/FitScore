@@ -42,7 +42,7 @@ export const perguntasPorBloco = [
   }
 ];
 
-export default function Formulario(): JSX.Element {
+export default function Formulario() {
   const [blocoAtivo, setBlocoAtivo] = useState(0);
   const totalBlocos = perguntasPorBloco.length;
   const progresso = ((blocoAtivo + 1) / totalBlocos) * 100;

@@ -13,10 +13,10 @@ type Candidate = {
   classificacao: string
 }
 
-const baseUrl = 'http://localhost:8080'
+const baseUrl = 'https://96c41b2ecab3.ngrok-free.app'
 const classifications = ['All', 'ALTO', 'APROVADO', 'QUESTIONAVEL', 'BAIXO']
 
-export default function DashboardPage(): JSX.Element {
+export default function DashboardPage() {
   const [data, setData] = useState<Candidate[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
